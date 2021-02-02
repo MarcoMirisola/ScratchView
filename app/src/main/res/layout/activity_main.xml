@@ -18,11 +18,8 @@
     <com.anupkumarpanwar.scratchview.ScratchView
         android:layout_centerInParent="true"
         android:id="@+id/scratch_view"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        app:overlay_height="300dp"
-        app:overlay_width="300dp"
-        app:overlay_image="@drawable/scratch_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:tile_mode="CLAMP" />
 
     <Button

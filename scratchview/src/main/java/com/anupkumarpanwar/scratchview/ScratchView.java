@@ -13,6 +13,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -150,25 +151,22 @@ public class ScratchView extends View {
 
         mErasePath = new Path();
         mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+    }
 
+    public void setScratchDrawable(Drawable resource, float overlayWidth, float overlayHeight) {
         TypedArray arr = mContext.obtainStyledAttributes(attrs, R.styleable.ScratchView,
                 styleAttr, 0);
-
-        int overlayImage = arr.getResourceId(R.styleable.ScratchView_overlay_image, R.drawable.ic_scratch_pattern);
-
-        float overlayWidth = arr.getDimension(R.styleable.ScratchView_overlay_width, 1000);
-        float overlayHeight = arr.getDimension(R.styleable.ScratchView_overlay_height, 1000);
-
-
+        Bitmap bitmap = Bitmap.createBitmap(resource.getIntrinsicWidth(), resource.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        resource.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        resource.draw(canvas);
+        scratchBitmap = bitmap;
+        scratchBitmap = Bitmap.createScaledBitmap(scratchBitmap, (int) overlayWidth, (int) overlayHeight, false);
+        mDrawable = new BitmapDrawable(getResources(), scratchBitmap);
         String tileMode = arr.getString(R.styleable.ScratchView_tile_mode);
         if (tileMode == null) {
             tileMode = "CLAMP";
         }
-
-        scratchBitmap = BitmapFactory.decodeResource(getResources(), overlayImage);
-        scratchBitmap = Bitmap.createScaledBitmap(scratchBitmap, (int) overlayWidth, (int) overlayHeight, false);
-        mDrawable = new BitmapDrawable(getResources(), scratchBitmap);
-
         switch (tileMode) {
             case "REPEAT":
                 mDrawable.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
@@ -182,7 +180,6 @@ public class ScratchView extends View {
             default:
                 mDrawable.setTileModeXY(Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
         }
-
     }
 
     /**
