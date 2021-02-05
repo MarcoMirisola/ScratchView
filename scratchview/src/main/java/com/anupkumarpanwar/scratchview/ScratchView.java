@@ -153,7 +153,7 @@ public class ScratchView extends View {
         mBitmapPaint = new Paint(Paint.DITHER_FLAG);
     }
 
-    public void setScratchDrawable(Drawable resource, float overlayWidth, float overlayHeight) {
+    public void setScratchDrawable(Drawable resource, int overlayWidth, int overlayHeight) {
         TypedArray arr = mContext.obtainStyledAttributes(attrs, R.styleable.ScratchView,
                 styleAttr, 0);
         Bitmap bitmap = Bitmap.createBitmap(resource.getIntrinsicWidth(), resource.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
@@ -161,7 +161,7 @@ public class ScratchView extends View {
         resource.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         resource.draw(canvas);
         scratchBitmap = bitmap;
-        scratchBitmap = Bitmap.createScaledBitmap(scratchBitmap, (int) overlayWidth, (int) overlayHeight, false);
+        scratchBitmap = Bitmap.createScaledBitmap(scratchBitmap, overlayWidth, overlayHeight, false);
         mDrawable = new BitmapDrawable(getResources(), scratchBitmap);
         String tileMode = arr.getString(R.styleable.ScratchView_tile_mode);
         if (tileMode == null) {
@@ -199,6 +199,8 @@ public class ScratchView extends View {
         mCanvas = new Canvas(mScratchBitmap);
 
         Rect rect = new Rect(0, 0, getWidth(), getHeight());
+        if (mDrawable == null)
+            return;
         mDrawable.setBounds(rect);
 
         int startGradientColor = ContextCompat.getColor(getContext(), R.color.scratch_start_gradient);
@@ -296,6 +298,8 @@ public class ScratchView extends View {
     public void mask() {
         clear();
         mRevealPercent = 0;
+        if (scratchBitmap == null)
+            return;
         mCanvas.drawBitmap(scratchBitmap, 0, 0, mBitmapPaint);
         invalidate();
     }
